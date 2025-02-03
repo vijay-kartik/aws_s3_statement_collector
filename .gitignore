@@ -40,3 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 AWSCLIV2.pkg
+deploy.sh
+docker-compose.yml
+Dockerfile
+nextjs-app.tar
