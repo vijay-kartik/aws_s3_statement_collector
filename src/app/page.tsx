@@ -109,6 +109,31 @@ export default function StatementUploader() {
     }
   };
 
+  const handleDelete = async (filename: string) => {
+    if (window.confirm(`Are you sure you want to delete ${filename}?`)) {
+      try {
+        const response = await fetch(`/api/s3-delete?filename=${encodeURIComponent(filename)}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete file');
+        }
+
+        toast.success('File deleted successfully');
+        fetchFiles(); // Refresh the list
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        toast.error('Failed to delete file');
+      }
+    }
+  };
+
+  const handleAnalyse = (filename: string) => {
+    // To be implemented later
+    toast.info('Analysis feature coming soon!');
+  };
+
   // Format bytes to human-readable size
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -226,6 +251,9 @@ export default function StatementUploader() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Last Modified
                   </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -239,6 +267,48 @@ export default function StatementUploader() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(file.lastModified).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
+                      <div className="flex justify-end space-x-2">
+                        <button
+                          onClick={() => handleAnalyse(file.name)}
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                          title="Analyse document"
+                        >
+                          <svg 
+                            className="w-5 h-5" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" 
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(file.name)}
+                          className="text-red-600 hover:text-red-800 transition-colors"
+                          title="Delete document"
+                        >
+                          <svg 
+                            className="w-5 h-5" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              strokeWidth={2} 
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" 
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
