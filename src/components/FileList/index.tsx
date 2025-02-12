@@ -1,10 +1,13 @@
-import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { S3File } from '@/types';
 import { s3Service } from '@/services/s3Service';
-import { formatFileSize } from '@/utils/formatters';
-import { FileListHeader } from '@/components/FileList/FileListHeader';
-import { FileListTable } from '@/components/FileList/FileListTable';
+import { FileListHeader } from './FileListHeader';
+import { FileListTable } from './FileListTable';
+
+interface S3File {
+  name: string;
+  lastModified: string;
+  size: number;
+}
 
 interface FileListProps {
   files: S3File[];
@@ -17,8 +20,7 @@ export default function FileList({ files, isLoading, onRefresh }: FileListProps)
     if (window.confirm(`Are you sure you want to delete ${filename}?`)) {
       try {
         await s3Service.deleteFile(filename);
-        toast.success('File deleted successfully');
-        onRefresh();
+        onRefresh(); // Refresh the list
       } catch (error) {
         console.error('Error deleting file:', error);
         toast.error('Failed to delete file');
@@ -27,7 +29,15 @@ export default function FileList({ files, isLoading, onRefresh }: FileListProps)
   };
 
   const handleAnalyse = (filename: string) => {
-    toast.info('Analysis feature coming soon!');
+    s3Service.analyseFile(filename);
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   return (

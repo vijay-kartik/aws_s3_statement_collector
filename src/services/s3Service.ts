@@ -1,4 +1,5 @@
 import { S3File } from '@/types';
+import { toast } from 'react-toastify';
 
 export const s3Service = {
   async listFiles(): Promise<S3File[]> {
@@ -34,5 +35,10 @@ export const s3Service = {
     }
 
     return response.json();
+  },
+
+  async analyseFile(filename: string): Promise<void> {
+    // Navigate to the analysis page
+    window.location.href = `/analysis/${encodeURIComponent(filename)}`;
   }
 }; 

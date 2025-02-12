@@ -17,13 +17,13 @@ export const FileListRow = memo(function FileListRow({
 }: FileListRowProps) {
   return (
     <tr className="hover:bg-gray-50">
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 w-1/2 md:w-auto">
         {file.name}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+      <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         {formatFileSize(file.size)}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+      <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
         {new Date(file.lastModified).toLocaleString()}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
