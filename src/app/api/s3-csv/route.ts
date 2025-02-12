@@ -1,6 +1,6 @@
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { NextResponse } from 'next/server';
-import EXTRACT_TRANSACTIONS_PROMPT from '@/constants/extract_transactions_prompt';
+import EXTRACT_TRANSACTIONS_PROMPT from '../../../constants/extract_transactions_prompt';
 
 const s3Client = new S3Client({
   region: process.env.AWS_DEFAULT_REGION,

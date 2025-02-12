@@ -1,5 +1,4 @@
 import { S3File } from '@/types';
-import { toast } from 'react-toastify';
 
 export const s3Service = {
   async listFiles(): Promise<S3File[]> {
