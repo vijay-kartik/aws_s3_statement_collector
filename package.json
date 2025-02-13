@@ -9,14 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.740.0",
+    "@aws-sdk/client-s3": "^3.744.0",
     "@aws-sdk/s3-presigned-post": "^3.740.0",
     "@aws-sdk/s3-request-presigner": "^3.740.0",
+    "clsx": "^2.1.1",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.5",
-    "react-toastify": "^11.0.3"
+    "react-toastify": "^11.0.3",
+    "tailwind-merge": "^3.0.1",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

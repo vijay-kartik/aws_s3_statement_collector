@@ -18,8 +18,9 @@ export default function AnalysisPage() {
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        // Use relative path instead of absolute URL
-        const apiUrl = `/api/s3-csv?filename=${encodeURIComponent(filename as string)}`;
+        // Construct API URL using window.location.origin to ensure correct base URL in production
+        const baseUrl = window.location.origin;
+        const apiUrl = `${baseUrl}/api/s3-csv?filename=${encodeURIComponent(filename as string)}`;
         console.log('Fetching from:', apiUrl); // Debug log
         
         const response = await fetch(apiUrl, {
