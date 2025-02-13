@@ -40,13 +40,20 @@ async function saveSubscriptions(subscriptions: Subscription[]): Promise<void> {
   await s3Client.send(command);
 }
 
+interface RouteContext {
+  params: {
+    id: string;
+  };
+}
+
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: RouteContext
 ) {
   try {
+    const { id } = context.params;
     const subscriptions = await getSubscriptions();
-    const subscriptionIndex = subscriptions.findIndex(sub => sub.id === params.id);
+    const subscriptionIndex = subscriptions.findIndex(sub => sub.id === id);
 
     if (subscriptionIndex === -1) {
       return NextResponse.json(
