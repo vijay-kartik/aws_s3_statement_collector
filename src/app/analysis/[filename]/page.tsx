@@ -18,12 +18,26 @@ export default function AnalysisPage() {
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        const response = await fetch(`/api/s3-csv?filename=${encodeURIComponent(filename as string)}`);
-        const data: AnalysisData = await response.json();
+        // Use relative path instead of absolute URL
+        const apiUrl = `/api/s3-csv?filename=${encodeURIComponent(filename as string)}`;
+        console.log('Fetching from:', apiUrl); // Debug log
+        
+        const response = await fetch(apiUrl, {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
         
         if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch analysis');
+          throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
         }
+        
+        const contentType = response.headers.get('content-type');
+        if (!contentType?.includes('application/json')) {
+          throw new Error(`Expected JSON response but got ${contentType}`);
+        }
+
+        const data: AnalysisData = await response.json();
         
         if (data.analysis) {
           setAnalysis(data.analysis);
@@ -31,9 +45,11 @@ export default function AnalysisPage() {
           throw new Error('No analysis data received');
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load analysis';
-        console.error('Error:', error);
-        setError(errorMessage);
+        const errorMessage = error instanceof Error 
+          ? `Error: ${error.message}` 
+          : 'Failed to load analysis';
+        console.error('Fetch error:', error);
+        setError(`Failed to fetch analysis data. ${errorMessage}. Please ensure the API is properly configured.`);
         toast.error(errorMessage);
       } finally {
         setLoading(false);
