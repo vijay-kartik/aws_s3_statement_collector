@@ -20,9 +20,14 @@ export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
     if (!forceRefresh) {
       const cachedData = localStorage.getItem('cachedSubscriptions');
       if (cachedData) {
-        const parsedData = JSON.parse(cachedData);
-        set({ subscriptions: parsedData });
-        return;
+        try {
+          const parsedData = JSON.parse(cachedData) as Subscription[];
+          set({ subscriptions: parsedData });
+          return;
+        } catch (error) {
+          console.error('Error parsing cached subscriptions:', error);
+          localStorage.removeItem('cachedSubscriptions');
+        }
       }
     }
 
@@ -32,13 +37,14 @@ export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
       if (!response.ok) {
         throw new Error('Failed to fetch subscriptions');
       }
-      const data = await response.json();
+      const data = await response.json() as { subscriptions: Subscription[] };
       set({ subscriptions: data.subscriptions });
       
       // Update cache
       localStorage.setItem('cachedSubscriptions', JSON.stringify(data.subscriptions));
     } catch (error) {
-      set({ error: error instanceof Error ? error.message : 'Failed to fetch subscriptions' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch subscriptions';
+      set({ error: errorMessage });
     } finally {
       set({ loading: false });
     }
@@ -58,14 +64,14 @@ export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
         throw new Error('Failed to add subscription');
       }
 
-      const newSubscription = await response.json();
+      const newSubscription = await response.json() as Subscription;
       const updatedSubscriptions = [...get().subscriptions, newSubscription];
       set({ subscriptions: updatedSubscriptions });
       
       // Update cache
       localStorage.setItem('cachedSubscriptions', JSON.stringify(updatedSubscriptions));
     } catch (error) {
-      throw error;
+      throw error instanceof Error ? error : new Error('Failed to add subscription');
     }
   },
 
@@ -85,7 +91,7 @@ export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
       // Update cache
       localStorage.setItem('cachedSubscriptions', JSON.stringify(updatedSubscriptions));
     } catch (error) {
-      throw error;
+      throw error instanceof Error ? error : new Error('Failed to delete subscription');
     }
   },
 })); 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatDate } from '@/utils/format';
@@ -10,20 +10,20 @@ export default function SubscriptionsList() {
   const { subscriptions, loading, error, fetchSubscriptions, deleteSubscription } = useSubscriptionStore();
 
   useEffect(() => {
-    // Initial load from cache
-    fetchSubscriptions();
+    void fetchSubscriptions();
   }, [fetchSubscriptions]);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     try {
-      await fetchSubscriptions(true); // Force refresh from network
+      await fetchSubscriptions(true);
       toast.success('Subscriptions refreshed');
-    } catch (error) {
+    } catch (err) {
+      console.error('Error refreshing subscriptions:', err);
       toast.error('Failed to refresh subscriptions');
     }
-  };
+  }, [fetchSubscriptions]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     if (!confirm('Are you sure you want to delete this subscription?')) {
       return;
     }
@@ -31,11 +31,11 @@ export default function SubscriptionsList() {
     try {
       await deleteSubscription(id);
       toast.success('Subscription deleted successfully');
-    } catch (error) {
-      console.error('Error deleting subscription:', error);
+    } catch (err) {
+      console.error('Error deleting subscription:', err);
       toast.error('Failed to delete subscription');
     }
-  };
+  }, [deleteSubscription]);
 
   if (loading) {
     return (
@@ -59,7 +59,7 @@ export default function SubscriptionsList() {
       <div className="flex justify-between items-center p-4 border-b border-gray-700">
         <h2 className="text-lg font-semibold text-gray-100">Your Subscriptions</h2>
         <Button
-          variant="secondary"
+          variant="ghost"
           size="sm"
           onClick={handleRefresh}
           disabled={loading}
@@ -156,7 +156,7 @@ export default function SubscriptionsList() {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => handleDelete(subscription.id)}
+                      onClick={() => void handleDelete(subscription.id)}
                       className="ml-2 bg-red-900 hover:bg-red-800 text-red-100"
                     >
                       Delete

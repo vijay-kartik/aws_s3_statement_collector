@@ -1,5 +1,6 @@
 import { S3Client, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { NextResponse } from 'next/server';
+import type { S3File } from '@/types';
 
 const s3Client = new S3Client({
   region: process.env.AWS_DEFAULT_REGION,
@@ -9,7 +10,7 @@ const s3Client = new S3Client({
   },
 });
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     const command = new ListObjectsV2Command({
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -17,18 +18,17 @@ export async function GET() {
 
     const response = await s3Client.send(command);
     
-    const files = response.Contents
-      ?.filter(item => item.Key?.toLowerCase().endsWith('.pdf')) // Filter only PDF files
+    const files: S3File[] = response.Contents
+      ?.filter((item): item is NonNullable<typeof item> => 
+        Boolean(item.Key?.toLowerCase().endsWith('.pdf'))
+      )
       .map(item => ({
-        name: item.Key,
-        lastModified: item.LastModified,
-        size: item.Size,
+        name: item.Key!,
+        lastModified: item.LastModified!,
+        size: item.Size!,
       }))
       .sort((a, b) => {
-        // Sort by last modified date, most recent first
-        const dateA = a.lastModified?.getTime() || 0;
-        const dateB = b.lastModified?.getTime() || 0;
-        return dateB - dateA;
+        return b.lastModified.getTime() - a.lastModified.getTime();
       }) || [];
 
     return NextResponse.json({ files });
