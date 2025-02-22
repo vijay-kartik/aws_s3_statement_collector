@@ -17,11 +17,19 @@ export async function GET() {
 
     const response = await s3Client.send(command);
     
-    const files = response.Contents?.map(item => ({
-      name: item.Key,
-      lastModified: item.LastModified,
-      size: item.Size,
-    })) || [];
+    const files = response.Contents
+      ?.filter(item => item.Key?.toLowerCase().endsWith('.pdf')) // Filter only PDF files
+      .map(item => ({
+        name: item.Key,
+        lastModified: item.LastModified,
+        size: item.Size,
+      }))
+      .sort((a, b) => {
+        // Sort by last modified date, most recent first
+        const dateA = a.lastModified?.getTime() || 0;
+        const dateB = b.lastModified?.getTime() || 0;
+        return dateB - dateA;
+      }) || [];
 
     return NextResponse.json({ files });
   } catch (error) {
