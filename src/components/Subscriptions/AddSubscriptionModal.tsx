@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/Button';
 import { BillingCycle } from '@/types/subscription';
+import { useSubscriptionStore } from '@/stores/subscription/store';
 
 interface AddSubscriptionModalProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface AddSubscriptionModalProps {
 }
 
 export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptionModalProps) {
+  const addSubscription = useSubscriptionStore(state => state.addSubscription);
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
@@ -23,20 +25,10 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/subscriptions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          amount: parseFloat(formData.amount),
-        }),
+      await addSubscription({
+        ...formData,
+        amount: parseFloat(formData.amount),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to add subscription');
-      }
 
       toast.success('Subscription added successfully');
       onClose();

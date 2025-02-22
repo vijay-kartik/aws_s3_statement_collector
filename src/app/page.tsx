@@ -6,8 +6,11 @@ import "react-toastify/dist/ReactToastify.css";
 import FileList from "@/components/FileList";
 import { s3Service } from "@/services/s3Service";
 import type { S3File } from "@/types";
+import { useRouter } from 'next/navigation';
+import { Button } from "@/components/ui/Button";
 
 export default function StatementUploader() {
+  const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [files, setFiles] = useState<S3File[]>([]);
@@ -87,9 +90,21 @@ export default function StatementUploader() {
 
   return (
     <div className="min-h-screen p-8 bg-gray-50">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        Statement Collector
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">
+          Statement Collector
+        </h1>
+        <Button
+          onClick={() => router.push('/subs')}
+          variant="secondary"
+          className="flex items-center gap-2"
+        >
+          <span>See Subscriptions</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </Button>
+      </div>
 
       <div
         {...getRootProps()}

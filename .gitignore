@@ -44,3 +44,6 @@ deploy.sh
 docker-compose.yml
 Dockerfile
 nextjs-app.tar
+
+#cursor config
+.cursorrules
