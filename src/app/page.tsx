@@ -8,6 +8,7 @@ import { s3Service } from "@/services/s3Service";
 import type { S3File } from "@/types";
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/ui/Logo";
 
 export default function StatementUploader() {
   const router = useRouter();
@@ -89,85 +90,86 @@ export default function StatementUploader() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Statement Collector
-        </h1>
-        <Button
-          onClick={() => router.push('/subs')}
-          variant="secondary"
-          className="flex items-center gap-2"
-        >
-          <span>See Subscriptions</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </Button>
-      </div>
-
-      <div
-        {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-          ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"}
-          transition-colors duration-200 mb-6`}
-      >
-        <input {...getInputProps()} />
-        <div className="space-y-4">
-          <svg className="mx-auto h-12 w-12 text-gray-400" /*...*/>
-            {/* Upload icon */}
-          </svg>
-          <p className="text-lg text-gray-600">
-            {isDragActive ? "Drop PDF here" : "Drag & drop or click to select"}
-          </p>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto p-8">
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center gap-3">
+            <Logo className="w-8 h-8 text-blue-600" />
+            <h1 className="text-3xl font-bold text-gray-900">Statement Collector</h1>
+          </div>
+          <Button
+            onClick={() => router.push('/subs')}
+            variant="secondary"
+            className="flex items-center gap-2"
+          >
+            <span>See Subscriptions</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Button>
         </div>
-      </div>
 
-      <button
-        onClick={() =>
-          (
-            document.querySelector('input[type="file"]') as HTMLInputElement
-          )?.click()
-        }
-        disabled={isUploading}
-        className={`w-full md:w-auto px-6 py-3 text-white rounded-lg transition-all
-          ${
-            isUploading
-              ? "bg-blue-400 cursor-wait"
-              : "bg-blue-500 hover:bg-blue-600"
+        <div
+          {...getRootProps()}
+          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
+            ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"}
+            transition-colors duration-200 mb-6`}
+        >
+          <input {...getInputProps()} />
+          <div className="space-y-4">
+            <Logo className="mx-auto h-12 w-12 text-gray-400" />
+            <p className="text-lg text-gray-600">
+              {isDragActive ? "Drop PDF here" : "Drag & drop or click to select"}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() =>
+            (
+              document.querySelector('input[type="file"]') as HTMLInputElement
+            )?.click()
           }
-          relative overflow-hidden`}
-      >
-        <span className="flex items-center justify-center gap-2">
+          disabled={isUploading}
+          className={`w-full md:w-auto px-6 py-3 text-white rounded-lg transition-all
+            ${
+              isUploading
+                ? "bg-blue-400 cursor-wait"
+                : "bg-blue-500 hover:bg-blue-600"
+            }
+            relative overflow-hidden`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            {isUploading && (
+              <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+            )}
+            {isUploading ? "Uploading..." : "Upload Statement"}
+          </span>
+
+          {/* Progress bar animation */}
           {isUploading && (
-            <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+            <div
+              className="absolute bottom-0 left-0 h-1 bg-blue-200 transition-all"
+              style={{ width: `${uploadProgress}%` }}
+            />
           )}
-          {isUploading ? "Uploading..." : "Upload Statement"}
-        </span>
+        </button>
 
-        {/* Progress bar animation */}
-        {isUploading && (
-          <div
-            className="absolute bottom-0 left-0 h-1 bg-blue-200 transition-all"
-            style={{ width: `${uploadProgress}%` }}
-          />
-        )}
-      </button>
+        <FileList 
+          files={files}
+          isLoading={isLoading}
+          onRefresh={fetchFiles}
+        />
 
-      <FileList 
-        files={files}
-        isLoading={isLoading}
-        onRefresh={fetchFiles}
-      />
-
-      <ToastContainer
-        position="bottom-right"
-        autoClose={3000}
-        hideProgressBar
-        newestOnTop
-        closeOnClick
-        theme="colored"
-      />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          theme="colored"
+        />
+      </div>
     </div>
   );
 }
