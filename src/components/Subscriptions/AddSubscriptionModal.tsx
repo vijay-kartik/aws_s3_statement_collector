@@ -56,7 +56,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">Add New Subscription</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-900">Add New Subscription</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -69,7 +69,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
             />
           </div>
 
@@ -85,7 +85,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               required
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
             />
           </div>
 
@@ -98,7 +98,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               value={formData.billingCycle}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
             >
               <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
@@ -116,7 +116,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               value={formData.startDate}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
             />
           </div>
 
@@ -128,7 +128,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
               rows={3}
             />
           </div>

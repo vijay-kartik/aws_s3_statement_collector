@@ -24,11 +24,11 @@ export async function GET(): Promise<NextResponse> {
       )
       .map(item => ({
         name: item.Key!,
-        lastModified: item.LastModified!,
+        lastModified: item.LastModified!.toISOString(),
         size: item.Size!,
       }))
       .sort((a, b) => {
-        return b.lastModified.getTime() - a.lastModified.getTime();
+        return new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
       }) || [];
 
     return NextResponse.json({ files });
