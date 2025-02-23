@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/Button';
-import { BillingCycle, Currency } from '@/types/subscription';
+import { BillingCycle } from '@/types/subscription';
 import { useSubscriptionStore } from '@/stores/subscription/store';
 
 interface AddSubscriptionModalProps {
@@ -16,7 +16,6 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
-    currency: 'USD' as Currency,
     billingCycle: 'monthly' as BillingCycle,
     startDate: '',
     description: '',
@@ -37,7 +36,6 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
       setFormData({
         name: '',
         amount: '',
-        currency: 'USD',
         billingCycle: 'monthly',
         startDate: '',
         description: '',
@@ -79,29 +77,16 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Amount
             </label>
-            <div className="flex space-x-2">
-              <select
-                name="currency"
-                value={formData.currency}
-                onChange={handleChange}
-                required
-                className="w-24 px-3 py-2 border border-gray-300 rounded-md text-gray-900"
-              >
-                <option value="USD">USD</option>
-                <option value="INR">INR</option>
-              </select>
-              <input
-                type="number"
-                name="amount"
-                value={formData.amount}
-                onChange={handleChange}
-                required
-                min="0"
-                step="0.01"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-gray-900"
-                placeholder={formData.currency === 'USD' ? '0.00' : '0'}
-              />
-            </div>
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              required
+              min="0"
+              step="0.01"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+            />
           </div>
 
           <div>

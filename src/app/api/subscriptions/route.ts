@@ -63,7 +63,6 @@ export async function POST(request: Request) {
       id: uuidv4(),
       name: body.name,
       amount: body.amount,
-      currency: body.currency,
       billingCycle: body.billingCycle,
       startDate: body.startDate,
       description: body.description || '',

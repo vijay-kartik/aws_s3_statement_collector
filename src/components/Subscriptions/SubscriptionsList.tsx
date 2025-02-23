@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatDate } from '@/utils/format';
@@ -8,13 +8,6 @@ import { useSubscriptionStore } from '@/stores/subscription/store';
 
 export default function SubscriptionsList() {
   const { subscriptions, loading, error, fetchSubscriptions, deleteSubscription } = useSubscriptionStore();
-
-  // Sort subscriptions by next payment date
-  const sortedSubscriptions = useMemo(() => {
-    return [...subscriptions].sort((a, b) => {
-      return new Date(a.nextPaymentDate).getTime() - new Date(b.nextPaymentDate).getTime();
-    });
-  }, [subscriptions]);
 
   useEffect(() => {
     void fetchSubscriptions();
@@ -95,7 +88,7 @@ export default function SubscriptionsList() {
         </Button>
       </div>
 
-      {sortedSubscriptions.length === 0 ? (
+      {subscriptions.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-8">
           <p className="text-gray-400">No subscriptions found</p>
         </div>
@@ -125,7 +118,7 @@ export default function SubscriptionsList() {
               </tr>
             </thead>
             <tbody className="bg-gray-900 divide-y divide-gray-700">
-              {sortedSubscriptions.map((subscription) => (
+              {subscriptions.map((subscription) => (
                 <tr key={subscription.id} className="hover:bg-gray-800 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -136,7 +129,7 @@ export default function SubscriptionsList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-300">
-                      {formatCurrency(subscription.amount, subscription.currency)}
+                      {formatCurrency(subscription.amount)}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
