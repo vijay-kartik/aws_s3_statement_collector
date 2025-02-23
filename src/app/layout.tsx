@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Statement Collector',
+  title: 'Elucida',
   description: 'Analyze and manage your credit card statements and subscriptions',
   manifest: '/manifest.json',
   icons: {
@@ -33,7 +33,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/app-logo.svg" type="image/svg+xml" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Statement Collector" />
+        <meta name="apple-mobile-web-app-title" content="Elucida" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#1E4E5F" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />

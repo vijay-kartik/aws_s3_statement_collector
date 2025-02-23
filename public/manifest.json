@@ -1,6 +1,6 @@
 {
-  "name": "Statement Collector",
-  "short_name": "Statements",
+  "name": "Elucida",
+  "short_name": "Elucida",
   "description": "Analyze and manage your credit card statements and subscriptions",
   "start_url": "/",
   "display": "standalone",
