@@ -1,13 +1,14 @@
 import { create } from 'zustand';
-import { Subscription } from '@/types/subscription';
+import { Subscription, Currency } from '@/types/subscription';
+import { toast } from 'react-toastify';
 
 interface SubscriptionStore {
   subscriptions: Subscription[];
   loading: boolean;
   error: string | null;
   fetchSubscriptions: (forceRefresh?: boolean) => Promise<void>;
-  addSubscription: (subscription: Omit<Subscription, 'id' | 'status' | 'nextPaymentDate' | 'createdAt' | 'updatedAt'>) => Promise<void>;
-  deleteSubscription: (id: string) => Promise<void>;
+  addSubscription: (subscription: Omit<Subscription, 'id' | 'status' | 'nextPaymentDate' | 'createdAt' | 'updatedAt'> & { currency: Currency }) => Promise<void>;
+  deleteSubscription: (id: string) => Promise<boolean>;
 }
 
 export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
@@ -57,7 +58,10 @@ export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(subscription),
+        body: JSON.stringify({
+          ...subscription,
+          currency: subscription.currency || 'USD', // Ensure currency is always set
+        }),
       });
 
       if (!response.ok) {
@@ -82,16 +86,18 @@ export const useSubscriptionStore = create<SubscriptionStore>((set, get) => ({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete subscription');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete subscription');
       }
 
       const updatedSubscriptions = get().subscriptions.filter(sub => sub.id !== id);
       set({ subscriptions: updatedSubscriptions });
-      
-      // Update cache
       localStorage.setItem('cachedSubscriptions', JSON.stringify(updatedSubscriptions));
+      return true;
     } catch (error) {
-      throw error instanceof Error ? error : new Error('Failed to delete subscription');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete subscription';
+      toast.error(errorMessage);
+      throw error;
     }
   },
 })); 
