@@ -1,20 +1,10 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useGymStore } from '@/stores/gym/store';
 import { Button } from '@/components/ui/Button';
 import GymCheckInItem from './GymCheckInItem';
 import CurrentGymSession from './CurrentGymSession';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import PullToRefreshIndicator from '@/components/ui/PullToRefreshIndicator';
-
-function formatDateTime(isoString: string): string {
-  return new Date(isoString).toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true
-  });
-}
 
 export default function GymCheckInList() {
   const { 
