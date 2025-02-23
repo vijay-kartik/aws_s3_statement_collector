@@ -1,93 +1,67 @@
 "use client";
 
-import { useEffect } from "react";
-import { useDropzone } from "react-dropzone";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import FileList from "@/components/FileList";
 import { useRouter } from 'next/navigation';
-import { Button } from "@/components/ui/Button";
-import { Logo } from "@/components/ui/Logo";
-import { useFileStore } from "@/stores/file/store";
+import { Button } from '@/components/ui/Button';
 
-export default function StatementUploader() {
+export default function LandingPage() {
   const router = useRouter();
-  const { 
-    files,
-    isLoading,
-    uploadFile,
-    fetchFiles
-  } = useFileStore();
-
-  useEffect(() => {
-    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
-    if (!hasVisitedBefore) {
-      fetchFiles();
-      localStorage.setItem('hasVisitedBefore', 'true');
-    } else {
-      fetchFiles(false); // Use cached data if available
-    }
-  }, [fetchFiles]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: { "application/pdf": [".pdf"] },
-    multiple: false,
-    onDrop: async (acceptedFiles) => {
-      if (acceptedFiles.length > 0) {
-        await uploadFile(acceptedFiles[0]);
-      }
-    },
-  });
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-6 sm:p-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <Logo className="w-8 h-8 text-blue-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Statement Collector</h1>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="pt-16 sm:pt-24 text-center">
+          <div className="mb-6">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2">Welcome Kartik!</h1>
+            <div className="h-1 w-24 bg-blue-600 mx-auto"></div>
           </div>
-          <Button
-            onClick={() => router.push('/subs')}
-            variant="secondary"
-            className="w-full sm:w-auto flex items-center justify-center gap-2"
-          >
-            <span>See Subscriptions</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </Button>
-        </div>
-
-        <div
-          {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center cursor-pointer
-            ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"}
-            transition-colors duration-200 mb-6`}
-        >
-          <input {...getInputProps()} />
-          <div className="space-y-4">
-            <Logo className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="text-base sm:text-lg text-gray-600">
-              {isDragActive ? "Drop PDF here" : "Drag & drop or click to select"}
-            </p>
+          <p className="text-lg text-gray-600 mb-8 px-4 sm:px-0">
+            Analyze and manage your credit card statements and subscriptions
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              onClick={() => router.push('/cc_statement_analyser')}
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
+            >
+              <span>Go to Statement Analyzer</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </Button>
+            <Button
+              onClick={() => router.push('/subs')}
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
+            >
+              <span>See Subscriptions</span>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </Button>
           </div>
         </div>
-
-        <FileList 
-          files={files}
-          isLoading={isLoading}
-          onRefresh={() => fetchFiles(true)}
-        />
-
-        <ToastContainer
-          position="bottom-right"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop
-          closeOnClick
-          theme="colored"
-        />
       </div>
     </div>
   );
