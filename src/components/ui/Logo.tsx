@@ -11,7 +11,7 @@ export function Logo({ className = '' }: LogoProps) {
     <div className={`relative inline-flex items-center justify-center ${className}`}>
       <Image 
         src="/app-logo.png"
-        alt="Statement Collector Logo"
+        alt="Elucida Logo"
         width={512}
         height={512}
         className="w-full h-full object-contain"
