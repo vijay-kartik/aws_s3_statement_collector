@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { toast } from 'react-toastify';
 
 interface GymSession {
   id: string;
@@ -14,11 +15,13 @@ interface GymStore {
   selectedSessions: Set<string>;
   checkIn: () => void;
   checkOut: () => void;
+  abandonSession: () => void;
   getSessions: () => GymSession[];
   toggleEditing: () => void;
   toggleSessionSelection: (id: string) => void;
   clearSelection: () => void;
   deleteSelectedSessions: () => void;
+  getSessionDuration: (checkInTime: string) => string;
 }
 
 export const useGymStore = create<GymStore>((set, get) => ({
@@ -37,6 +40,12 @@ export const useGymStore = create<GymStore>((set, get) => ({
     // Save to local storage
     localStorage.setItem('currentGymSession', JSON.stringify(newSession));
     set({ currentSession: newSession });
+
+    // Show toast notification
+    toast.success('Gym session started! View details in Gym Check-ins', {
+      position: "bottom-right",
+      autoClose: 3000
+    });
   },
 
   checkOut: () => {
@@ -45,10 +54,18 @@ export const useGymStore = create<GymStore>((set, get) => ({
 
     // Add checkout time
     const checkOutTime = new Date().toISOString();
+    const duration = calculateDuration(new Date(currentSession.checkInTime), new Date(checkOutTime));
+    
+    // Show toast with session duration
+    toast.success(`Gym session completed! Duration: ${duration}`, {
+      position: "bottom-right",
+      autoClose: 3000
+    });
+
     const completedSession = {
       ...currentSession,
       checkOutTime,
-      duration: calculateDuration(new Date(currentSession.checkInTime), new Date(checkOutTime)),
+      duration,
     };
 
     // Get existing sessions from localStorage
@@ -63,6 +80,23 @@ export const useGymStore = create<GymStore>((set, get) => ({
     set({ 
       currentSession: null,
       sessions: updatedSessions,
+    });
+  },
+
+  abandonSession: () => {
+    const currentSession = get().currentSession;
+    if (!currentSession) return;
+
+    // Remove from localStorage
+    localStorage.removeItem('currentGymSession');
+
+    // Update state
+    set({ currentSession: null });
+
+    // Show toast notification
+    toast.info('Gym session abandoned', {
+      position: "bottom-right",
+      autoClose: 3000
     });
   },
 
@@ -117,6 +151,16 @@ export const useGymStore = create<GymStore>((set, get) => ({
       selectedSessions: new Set(),
       isEditing: false
     });
+
+    // Show toast notification
+    toast.success(`${selectedSessions.size} session(s) deleted`, {
+      position: "bottom-right",
+      autoClose: 3000
+    });
+  },
+
+  getSessionDuration: (checkInTime: string) => {
+    return calculateDuration(new Date(checkInTime), new Date());
   },
 }));
 

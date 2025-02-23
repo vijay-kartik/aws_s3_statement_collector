@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGymStore } from '@/stores/gym/store';
 import { Button } from '@/components/ui/Button';
 
@@ -21,12 +21,35 @@ export default function GymCheckInList() {
     selectedSessions,
     toggleEditing,
     toggleSessionSelection,
-    deleteSelectedSessions
+    deleteSelectedSessions,
+    getSessionDuration,
+    abandonSession
   } = useGymStore();
+
+  // State to track current session duration
+  const [currentDuration, setCurrentDuration] = useState<string>('');
 
   useEffect(() => {
     getSessions();
   }, [getSessions]);
+
+  // Update duration every minute when there's an active session
+  useEffect(() => {
+    if (!currentSession) {
+      setCurrentDuration('');
+      return;
+    }
+
+    // Initial duration
+    setCurrentDuration(getSessionDuration(currentSession.checkInTime));
+
+    // Update duration every minute
+    const interval = setInterval(() => {
+      setCurrentDuration(getSessionDuration(currentSession.checkInTime));
+    }, 60000); // every minute
+
+    return () => clearInterval(interval);
+  }, [currentSession, getSessionDuration]);
 
   if (sessions.length === 0 && !currentSession) {
     return (
@@ -79,9 +102,36 @@ export default function GymCheckInList() {
       {/* Current session card */}
       {currentSession && (
         <div className="bg-[#1E4E5F] text-white p-4 rounded-lg">
-          <div className="font-semibold mb-2">Current Session</div>
-          <div>Check-in: {formatDateTime(currentSession.checkInTime)}</div>
-          <div className="text-[#E6D5CC]">Session in progress...</div>
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="font-semibold mb-2">Current Session</div>
+              <div>Check-in: {formatDateTime(currentSession.checkInTime)}</div>
+              <div className="text-[#E6D5CC] mt-2">
+                Session duration: {currentDuration}
+              </div>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={abandonSession}
+              className="text-[#E6D5CC] hover:text-white hover:bg-red-500/20"
+              title="Dismiss session"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </Button>
+          </div>
         </div>
       )}
       
