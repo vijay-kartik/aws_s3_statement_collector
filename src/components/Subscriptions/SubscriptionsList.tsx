@@ -127,14 +127,16 @@ export default function SubscriptionsList() {
                     </div>
                     <div className="flex flex-col sm:block">
                       <div className="text-sm font-medium text-[#E6D5CC] sm:hidden">Status:</div>
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                        ${subscription.status === 'active' 
-                          ? 'bg-green-900/50 text-green-200'
-                          : 'bg-red-900/50 text-red-200'
-                        }`}
-                      >
-                        {subscription.status}
-                      </span>
+                      <div className="flex">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full w-fit
+                          ${subscription.status === 'active' 
+                            ? 'bg-green-900/50 text-green-200'
+                            : 'bg-red-900/50 text-red-200'
+                          }`}
+                        >
+                          {subscription.status}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex justify-start sm:justify-end mt-4 sm:mt-0">
                       <Button
