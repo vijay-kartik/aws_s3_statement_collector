@@ -21,49 +21,95 @@ export default function LandingPage() {
           <p className="text-lg text-[#2D3436] mb-8 px-4 sm:px-0">
             Analyze and manage your credit card statements and subscriptions
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={() => router.push('/cc_statement_analyser')}
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
-            >
-              <span>Go to Statement Analyzer</span>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => router.push('/cc_statement_analyser')}
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
               >
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </Button>
-            <Button
-              onClick={() => router.push('/subs')}
-              variant="primary"
-              size="lg"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
-            >
-              <span>See Subscriptions</span>
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
+                <span>Go to Statement Analyzer</span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </Button>
+              <Button
+                onClick={() => router.push('/subs')}
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
               >
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </Button>
+                <span>See Subscriptions</span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </Button>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => router.push('/gym_checkin')}
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
+              >
+                <span>Gym Check-ins</span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </Button>
+              <Button
+                onClick={() => {}}
+                variant="secondary"
+                size="lg"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>Record Check-in</span>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
