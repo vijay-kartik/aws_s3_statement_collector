@@ -13,7 +13,7 @@ export default function LandingPage() {
         <div className="pt-16 sm:pt-24 text-center">
           <div className="mb-6">
             <div className="mb-8 flex justify-center">
-              <Logo className="w-32 h-32 sm:w-40 sm:h-40 transform hover:scale-105 transition-transform duration-200" preserveAspectRatio="xMidYMid meet" />
+              <Logo className="w-32 h-32 sm:w-40 sm:h-40 transform hover:scale-105 transition-transform duration-200" />
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-[#1E4E5F] mb-2">Welcome Kartik!</h1>
             <div className="h-1 w-24 bg-[#1E4E5F] mx-auto"></div>
