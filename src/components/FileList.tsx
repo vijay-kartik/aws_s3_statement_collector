@@ -70,7 +70,7 @@ export default function FileList({ files, isLoading, onRefresh }: FileListProps)
           {files.map((file) => (
             <li
               key={file.name}
-              className="p-4 hover:bg-gray-50 transition-colors duration-150 flex justify-between items-center"
+              className="p-4 hover:bg-gray-50 transition-colors duration-150 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4"
             >
               <div className="flex items-center space-x-4">
                 <div className="flex-shrink-0">
@@ -98,12 +98,12 @@ export default function FileList({ files, isLoading, onRefresh }: FileListProps)
                   </p>
                 </div>
               </div>
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 w-full sm:w-auto justify-end">
                 <Button
                   onClick={() => analyzeFile(file.name)}
                   variant="secondary"
                   size="sm"
-                  className="flex items-center"
+                  className="flex items-center flex-1 sm:flex-initial justify-center"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ export default function FileList({ files, isLoading, onRefresh }: FileListProps)
                   onClick={() => deleteFile(file.name)}
                   variant="danger"
                   size="sm"
-                  className="flex items-center"
+                  className="flex items-center flex-1 sm:flex-initial justify-center"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

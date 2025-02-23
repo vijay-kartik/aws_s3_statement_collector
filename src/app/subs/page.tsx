@@ -13,16 +13,16 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto p-8">
-        <div className="flex justify-between items-center mb-8">
+      <div className="container mx-auto px-4 py-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-3">
             <Logo className="w-8 h-8 text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Subscription Management</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Subscription Management</h1>
           </div>
           <Button
             variant="secondary"
             onClick={() => router.push('/')}
-            className="flex items-center gap-2"
+            className="w-full sm:w-auto flex items-center justify-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -37,12 +37,12 @@ export default function SubscriptionsPage() {
         </div>
 
         {/* Add Subscription Button */}
-        <div className="flex justify-center">
+        <div className="flex justify-center px-4">
           <Button 
             onClick={() => setIsAddModalOpen(true)}
             variant="primary"
             size="lg"
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg w-full sm:w-auto"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

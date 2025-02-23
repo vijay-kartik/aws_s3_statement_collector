@@ -54,11 +54,13 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4 text-gray-900">Add New Subscription</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-lg">
+          <h2 className="text-xl font-bold text-gray-900">Add New Subscription</h2>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Name
@@ -69,7 +71,8 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Netflix, Spotify, etc."
             />
           </div>
 
@@ -85,7 +88,8 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               required
               min="0"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="9.99"
             />
           </div>
 
@@ -98,7 +102,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               value={formData.billingCycle}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
@@ -116,7 +120,7 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               value={formData.startDate}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -128,22 +132,25 @@ export default function AddSubscriptionModal({ isOpen, onClose }: AddSubscriptio
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={3}
+              placeholder="Add any notes about this subscription..."
             />
           </div>
 
-          <div className="flex justify-end space-x-3 mt-6">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-6">
             <Button
               type="button"
               variant="secondary"
               onClick={onClose}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               variant="primary"
+              className="w-full sm:w-auto"
             >
               Add Subscription
             </Button>

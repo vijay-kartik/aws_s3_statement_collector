@@ -56,14 +56,14 @@ export default function SubscriptionsList() {
 
   return (
     <div className="bg-gray-900 rounded-lg">
-      <div className="flex justify-between items-center p-4 border-b border-gray-700">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b border-gray-700 gap-4">
         <h2 className="text-lg font-semibold text-gray-100">Your Subscriptions</h2>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleRefresh}
           disabled={loading}
-          className="flex items-center gap-2 text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 text-gray-300 hover:text-white bg-gray-800 hover:bg-gray-700"
           title="Refresh subscriptions"
         >
           <svg
@@ -94,78 +94,63 @@ export default function SubscriptionsList() {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-700">
-            <thead className="bg-gray-800">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Billing Cycle
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Next Payment
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-300 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-gray-900 divide-y divide-gray-700">
+          <div className="min-w-full divide-y divide-gray-700">
+            <div className="bg-gray-800 hidden sm:block">
+              <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 px-6 py-3">
+                <div className="text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Name</div>
+                <div className="text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Amount</div>
+                <div className="text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Billing Cycle</div>
+                <div className="text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Next Payment</div>
+                <div className="text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Status</div>
+                <div className="text-right text-xs font-medium text-gray-300 uppercase tracking-wider">Actions</div>
+              </div>
+            </div>
+            <div className="bg-gray-900 divide-y divide-gray-700">
               {subscriptions.map((subscription) => (
-                <tr key={subscription.id} className="hover:bg-gray-800 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="text-sm font-medium text-gray-100">
-                        {subscription.name}
-                      </div>
+                <div key={subscription.id} className="hover:bg-gray-800 transition-colors">
+                  <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 p-4 sm:px-6 sm:py-4">
+                    <div className="flex flex-col sm:block">
+                      <div className="text-sm font-medium text-gray-100 sm:hidden">Name:</div>
+                      <div className="text-sm font-medium text-gray-100">{subscription.name}</div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">
-                      {formatCurrency(subscription.amount)}
+                    <div className="flex flex-col sm:block">
+                      <div className="text-sm font-medium text-gray-100 sm:hidden">Amount:</div>
+                      <div className="text-sm text-gray-300">{formatCurrency(subscription.amount)}</div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">
-                      {subscription.billingCycle}
+                    <div className="flex flex-col sm:block">
+                      <div className="text-sm font-medium text-gray-100 sm:hidden">Billing Cycle:</div>
+                      <div className="text-sm text-gray-300">{subscription.billingCycle}</div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-300">
-                      {formatDate(subscription.nextPaymentDate)}
+                    <div className="flex flex-col sm:block">
+                      <div className="text-sm font-medium text-gray-100 sm:hidden">Next Payment:</div>
+                      <div className="text-sm text-gray-300">{formatDate(subscription.nextPaymentDate)}</div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                      ${subscription.status === 'active' 
-                        ? 'bg-green-900 text-green-200'
-                        : 'bg-red-900 text-red-200'
-                      }`}
-                    >
-                      {subscription.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => void handleDelete(subscription.id)}
-                      className="ml-2 bg-red-900 hover:bg-red-800 text-red-100"
-                    >
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
+                    <div className="flex flex-col sm:block">
+                      <div className="text-sm font-medium text-gray-100 sm:hidden">Status:</div>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        ${subscription.status === 'active' 
+                          ? 'bg-green-900 text-green-200'
+                          : 'bg-red-900 text-red-200'
+                        }`}
+                      >
+                        {subscription.status}
+                      </span>
+                    </div>
+                    <div className="flex justify-start sm:justify-end mt-4 sm:mt-0">
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => void handleDelete(subscription.id)}
+                        className="w-full sm:w-auto bg-red-900 hover:bg-red-800 text-red-100"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       )}
     </div>

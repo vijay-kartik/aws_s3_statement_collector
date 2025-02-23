@@ -41,16 +41,16 @@ export default function StatementUploader() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto p-8">
-        <div className="flex justify-between items-center mb-8">
+      <div className="container mx-auto px-4 py-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-3">
             <Logo className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Statement Collector</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Statement Collector</h1>
           </div>
           <Button
             onClick={() => router.push('/subs')}
             variant="secondary"
-            className="flex items-center gap-2"
+            className="w-full sm:w-auto flex items-center justify-center gap-2"
           >
             <span>See Subscriptions</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -61,14 +61,14 @@ export default function StatementUploader() {
 
         <div
           {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
+          className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center cursor-pointer
             ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"}
             transition-colors duration-200 mb-6`}
         >
           <input {...getInputProps()} />
           <div className="space-y-4">
             <Logo className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600">
               {isDragActive ? "Drop PDF here" : "Drag & drop or click to select"}
             </p>
           </div>
