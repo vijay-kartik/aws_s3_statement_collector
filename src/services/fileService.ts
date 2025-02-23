@@ -7,10 +7,7 @@ class FileService {
       throw new Error(`Failed to fetch files: ${response.statusText}`);
     }
     const data = await response.json();
-    return data.files.map((file: S3File) => ({
-      ...file,
-      lastModified: file.lastModified instanceof Date ? file.lastModified.toISOString() : file.lastModified
-    }));
+    return data.files;
   }
 
   async uploadFile(file: File): Promise<void> {
