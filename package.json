@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.751.0",
     "@aws-sdk/client-s3": "^3.744.0",
+    "@aws-sdk/lib-dynamodb": "^3.751.0",
     "@aws-sdk/s3-presigned-post": "^3.740.0",
     "@aws-sdk/s3-request-presigner": "^3.740.0",
     "clsx": "^2.1.1",
+    "idb": "^8.0.2",
     "next": "15.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

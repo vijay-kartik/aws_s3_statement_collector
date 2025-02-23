@@ -5,6 +5,7 @@ import GymCheckInItem from './GymCheckInItem';
 import CurrentGymSession from './CurrentGymSession';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import PullToRefreshIndicator from '@/components/ui/PullToRefreshIndicator';
+import { useGymSessions } from '@/hooks/useGymSessions';
 
 export default function GymCheckInList() {
   const { 
@@ -20,6 +21,8 @@ export default function GymCheckInList() {
     abandonSession
   } = useGymStore();
 
+  const { refresh } = useGymSessions();
+
   // State to track current session duration and refresh state
   const [currentDuration, setCurrentDuration] = useState<string>('');
 
@@ -29,7 +32,7 @@ export default function GymCheckInList() {
     isRefreshing,
     threshold
   } = usePullToRefresh({
-    onRefresh: async () => { await getSessions(); }
+    onRefresh: async () => { await refresh(); }
   });
 
   useEffect(() => {

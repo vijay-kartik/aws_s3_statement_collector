@@ -1,26 +1,23 @@
 import { create } from 'zustand';
 import { toast } from 'react-toastify';
+import { GymSession } from '@/types/gym';
+import { getDB } from '@/services/indexedDB';
+import { syncService } from '@/services/syncService';
 
-interface GymSession {
-  id: string;
-  checkInTime: string;
-  checkOutTime?: string;
-  duration?: string;
-}
 
 interface GymStore {
   currentSession: GymSession | null;
   sessions: GymSession[];
   isEditing: boolean;
   selectedSessions: Set<string>;
-  checkIn: () => void;
-  checkOut: () => void;
+  checkIn: () => Promise<void>;
+  checkOut: () => Promise<void>;
   abandonSession: () => void;
-  getSessions: () => GymSession[];
+  getSessions: () => Promise<GymSession[]>;
   toggleEditing: () => void;
   toggleSessionSelection: (id: string) => void;
   clearSelection: () => void;
-  deleteSelectedSessions: () => void;
+  deleteSelectedSessions: () => Promise<void>;
   getSessionDuration: (checkInTime: string) => string;
 }
 
@@ -30,57 +27,84 @@ export const useGymStore = create<GymStore>((set, get) => ({
   isEditing: false,
   selectedSessions: new Set<string>(),
 
-  checkIn: () => {
-    // Create a new session with current timestamp
-    const newSession = {
-      id: new Date().getTime().toString(),
-      checkInTime: new Date().toISOString(),
-    };
+  checkIn: async () => {
+    try {
+      const dbInstance = await getDB();
+      if (!dbInstance) {
+        toast.error('Database not available');
+        return;
+      }
 
-    // Save to local storage
-    localStorage.setItem('currentGymSession', JSON.stringify(newSession));
-    set({ currentSession: newSession });
+      // Create a new session with current timestamp
+      const newSession: GymSession = {
+        id: new Date().getTime().toString(),
+        checkInTime: new Date().toISOString(),
+        status: 'active',
+        syncStatus: 'pending'
+      };
 
-    // Show toast notification
-    toast.success('Gym session started! View details in Gym Check-ins', {
-      position: "bottom-right",
-      autoClose: 3000
-    });
+      // Save to IndexedDB and sync queue
+      await dbInstance.add('sessions', newSession);
+      await syncService.addToSyncQueue('create', newSession);
+      
+      // Process sync queue if online
+      syncService.processSyncQueue().catch(console.error);
+
+      // Save current session state
+      localStorage.setItem('currentGymSession', JSON.stringify(newSession));
+      set({ currentSession: newSession });
+
+      // Show toast notification
+      toast.success('Gym session started! View details in Gym Check-ins');
+    } catch (error) {
+      console.error('Error during check-in:', error);
+      toast.error('Failed to start gym session');
+    }
   },
 
-  checkOut: () => {
-    const currentSession = get().currentSession;
-    if (!currentSession) return;
+  checkOut: async () => {
+    try {
+      const currentSession = get().currentSession;
+      if (!currentSession) return;
 
-    // Add checkout time
-    const checkOutTime = new Date().toISOString();
-    const duration = calculateDuration(new Date(currentSession.checkInTime), new Date(checkOutTime));
-    
-    // Show toast with session duration
-    toast.success(`Gym session completed! Duration: ${duration}`, {
-      position: "bottom-right",
-      autoClose: 3000
-    });
+      const dbInstance = await getDB();
+      if (!dbInstance) {
+        toast.error('Database not available');
+        return;
+      }
 
-    const completedSession = {
-      ...currentSession,
-      checkOutTime,
-      duration,
-    };
+      // Add checkout time
+      const checkOutTime = new Date().toISOString();
+      const duration = calculateDuration(new Date(currentSession.checkInTime), new Date(checkOutTime));
+      
+      const completedSession: GymSession = {
+        ...currentSession,
+        checkOutTime,
+        duration,
+        status: 'completed',
+        syncStatus: 'pending'
+      };
 
-    // Get existing sessions from localStorage
-    const existingSessions = JSON.parse(localStorage.getItem('gymSessions') || '[]');
-    const updatedSessions = [...existingSessions, completedSession];
+      // Save to IndexedDB and sync queue
+      await dbInstance.put('sessions', completedSession);
+      await syncService.addToSyncQueue('update', completedSession);
+      
+      // Process sync queue if online
+      syncService.processSyncQueue().catch(console.error);
 
-    // Save to localStorage
-    localStorage.setItem('gymSessions', JSON.stringify(updatedSessions));
-    localStorage.removeItem('currentGymSession');
+      // Update local storage and state
+      localStorage.removeItem('currentGymSession');
+      set({ 
+        currentSession: null,
+        sessions: [...get().sessions, completedSession],
+      });
 
-    // Update state
-    set({ 
-      currentSession: null,
-      sessions: updatedSessions,
-    });
+      // Show toast with session duration
+      toast.success(`Gym session completed! Duration: ${duration}`);
+    } catch (error) {
+      console.error('Error during check-out:', error);
+      toast.error('Failed to complete gym session');
+    }
   },
 
   abandonSession: () => {
@@ -94,23 +118,39 @@ export const useGymStore = create<GymStore>((set, get) => ({
     set({ currentSession: null });
 
     // Show toast notification
-    toast.info('Gym session abandoned', {
-      position: "bottom-right",
-      autoClose: 3000
-    });
+    toast.info('Gym session abandoned');
   },
 
-  getSessions: () => {
-    // Get sessions from localStorage
-    const sessions = JSON.parse(localStorage.getItem('gymSessions') || '[]');
-    const currentSession = JSON.parse(localStorage.getItem('currentGymSession') || 'null');
-    
-    set({ 
-      sessions,
-      currentSession,
-    });
-    
-    return sessions;
+  getSessions: async () => {
+    try {
+      const dbInstance = await getDB();
+      if (!dbInstance) {
+        toast.error('Database not available');
+        return [];
+      }
+
+      // Get sessions from IndexedDB
+      const allSessions = await dbInstance.getAll('sessions');
+      
+      // Get current session from localStorage
+      const currentSession = JSON.parse(localStorage.getItem('currentGymSession') || 'null') as GymSession | null;
+      
+      // Sort sessions by check-in time (newest first)
+      const sortedSessions = allSessions.sort((a, b) => 
+        new Date(b.checkInTime).getTime() - new Date(a.checkInTime).getTime()
+      );
+
+      set({ 
+        sessions: sortedSessions,
+        currentSession,
+      });
+      
+      return sortedSessions;
+    } catch (error) {
+      console.error('Error loading sessions:', error);
+      toast.error('Failed to load sessions');
+      return [];
+    }
   },
 
   toggleEditing: () => {
@@ -136,27 +176,39 @@ export const useGymStore = create<GymStore>((set, get) => ({
     set({ selectedSessions: new Set() });
   },
 
-  deleteSelectedSessions: () => {
-    const { sessions, selectedSessions } = get();
-    
-    // Filter out selected sessions
-    const updatedSessions = sessions.filter(session => !selectedSessions.has(session.id));
-    
-    // Update localStorage
-    localStorage.setItem('gymSessions', JSON.stringify(updatedSessions));
-    
-    // Update state
-    set({
-      sessions: updatedSessions,
-      selectedSessions: new Set(),
-      isEditing: false
-    });
+  deleteSelectedSessions: async () => {
+    try {
+      const { sessions, selectedSessions } = get();
+      const dbInstance = await getDB();
+      if (!dbInstance) {
+        toast.error('Database not available');
+        return;
+      }
+      
+      const selectedSessionsArray = sessions.filter(session => selectedSessions.has(session.id));
+      
+      // Delete from IndexedDB and add to sync queue
+      for (const session of selectedSessionsArray) {
+        await dbInstance.delete('sessions', session.id);
+        await syncService.addToSyncQueue('delete', session);
+      }
+      
+      // Process sync queue if online
+      syncService.processSyncQueue().catch(console.error);
+      
+      // Update state
+      const updatedSessions = sessions.filter(session => !selectedSessions.has(session.id));
+      set({
+        sessions: updatedSessions,
+        selectedSessions: new Set(),
+        isEditing: false
+      });
 
-    // Show toast notification
-    toast.success(`${selectedSessions.size} session(s) deleted`, {
-      position: "bottom-right",
-      autoClose: 3000
-    });
+      toast.success(`${selectedSessions.size} session(s) deleted`);
+    } catch (error) {
+      console.error('Error deleting sessions:', error);
+      toast.error('Failed to delete sessions');
+    }
   },
 
   getSessionDuration: (checkInTime: string) => {
