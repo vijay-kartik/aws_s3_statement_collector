@@ -12,8 +12,8 @@ export default function LandingPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="pt-16 sm:pt-24 text-center">
           <div className="mb-6">
-            <div className="mb-8">
-              <Logo className="w-32 h-32 sm:w-40 sm:h-40 mx-auto" />
+            <div className="mb-8 flex justify-center">
+              <Logo className="w-32 h-32 sm:w-40 sm:h-40 transform hover:scale-105 transition-transform duration-200" preserveAspectRatio="xMidYMid meet" />
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-[#1E4E5F] mb-2">Welcome Kartik!</h1>
             <div className="h-1 w-24 bg-[#1E4E5F] mx-auto"></div>
@@ -26,7 +26,7 @@ export default function LandingPage() {
               onClick={() => router.push('/cc_statement_analyser')}
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8 bg-[#1E4E5F] hover:bg-[#1E4E5F]/90 text-white"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
             >
               <span>Go to Statement Analyzer</span>
               <svg 
@@ -47,7 +47,7 @@ export default function LandingPage() {
               onClick={() => router.push('/subs')}
               variant="primary"
               size="lg"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8 bg-[#1E4E5F] hover:bg-[#1E4E5F]/90 text-white"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
             >
               <span>See Subscriptions</span>
               <svg 

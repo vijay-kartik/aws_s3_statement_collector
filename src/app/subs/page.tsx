@@ -16,8 +16,8 @@ export default function SubscriptionsPage() {
       <div className="container mx-auto px-4 py-6 sm:p-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-3">
-            <Logo className="w-8 h-8 text-blue-600" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Subscription Management</h1>
+            <Logo className="w-8 h-8 transform hover:scale-105 transition-transform duration-200" />
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1E4E5F]">Subscription Management</h1>
           </div>
           <Button
             variant="secondary"
@@ -42,7 +42,7 @@ export default function SubscriptionsPage() {
             onClick={() => setIsAddModalOpen(true)}
             variant="primary"
             size="lg"
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-lg w-full sm:w-auto"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

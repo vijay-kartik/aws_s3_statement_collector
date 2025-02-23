@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: [
-      { url: '/app-logo.png', type: 'image/png' },
+      { url: '/app-logo.svg', type: 'image/svg+xml' },
     ],
     apple: [
-      { url: '/app-logo.png' },
+      { url: '/app-logo.svg', type: 'image/svg+xml' },
     ],
   },
 };
@@ -28,8 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/app-logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/app-logo.png" />
+        <link rel="icon" href="/app-logo.svg" type="image/svg+xml" />
+        <link rel="mask-icon" href="/app-logo.svg" color="#1E4E5F" />
+        <link rel="apple-touch-icon" href="/app-logo.svg" type="image/svg+xml" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Statement Collector" />

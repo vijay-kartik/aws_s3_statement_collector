@@ -25,7 +25,7 @@ export default function StatementAnalyzer() {
       fetchFiles();
       localStorage.setItem('hasVisitedBefore', 'true');
     } else {
-      fetchFiles(false); // Use cached data if available
+      fetchFiles(false);
     }
   }, [fetchFiles]);
 
@@ -44,8 +44,8 @@ export default function StatementAnalyzer() {
       <div className="container mx-auto px-4 py-6 sm:p-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div className="flex items-center gap-3">
-            <Logo className="w-8 h-8 text-blue-600" />
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Statement Analyzer</h1>
+            <Logo className="w-8 h-8 transform hover:scale-105 transition-transform duration-200" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#1E4E5F]">Statement Analyzer</h1>
           </div>
           <Button
             onClick={() => router.push('/')}
@@ -62,13 +62,13 @@ export default function StatementAnalyzer() {
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center cursor-pointer
-            ${isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"}
+            ${isDragActive ? "border-[#1E4E5F] bg-[#1E4E5F]/5" : "border-gray-300"}
             transition-colors duration-200 mb-6`}
         >
           <input {...getInputProps()} />
           <div className="space-y-4">
-            <Logo className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="text-base sm:text-lg text-gray-600">
+            <Logo className="mx-auto h-12 w-12 opacity-60" />
+            <p className="text-base sm:text-lg text-[#2D3436]">
               {isDragActive ? "Drop PDF here" : "Drag & drop or click to select"}
             </p>
           </div>
