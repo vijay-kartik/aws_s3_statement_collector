@@ -8,16 +8,13 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Statement Collector',
-  description: 'Collect and manage your statements and subscriptions',
+  description: 'Analyze and manage your credit card statements and subscriptions',
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/icon-32.png', type: 'image/png', sizes: '32x32' },
-      { url: '/icon-16.png', type: 'image/png', sizes: '16x16' },
+      { url: '/app-logo.png', type: 'image/png' },
     ],
     apple: [
-      { url: '/apple-icon.png', sizes: '180x180' },
+      { url: '/app-logo.png' },
     ],
   },
 };
@@ -30,9 +27,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <link rel="icon" href="/app-logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/app-logo.png" />
       </head>
       <body className={inter.className}>
         {children}

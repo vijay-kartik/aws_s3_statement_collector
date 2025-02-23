@@ -3,6 +3,11 @@
 @tailwind utilities;
 
 :root {
+  --primary: #1E4E5F;
+  --primary-light: #1E4E5F90;
+  --secondary: #E6D5CC;
+  --secondary-light: #E6D5CC80;
+  --text: #2D3436;
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -15,7 +20,14 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text);
+  background: var(--secondary);
+  background-opacity: 0.2;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--primary);
+  }
 }
