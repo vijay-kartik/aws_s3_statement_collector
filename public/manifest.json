@@ -1,0 +1,23 @@
+{
+  "name": "Statement Collector",
+  "short_name": "Statements",
+  "description": "Analyze and manage your credit card statements and subscriptions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E6D5CC",
+  "theme_color": "#1E4E5F",
+  "icons": [
+    {
+      "src": "/app-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+} 
