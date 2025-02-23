@@ -33,7 +33,14 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col items-center gap-4">
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Button
+              variant="primary"
+              onClick={() => router.push('/cc_statement_analyser')}
+              className="w-full sm:w-auto"
+            >
+              Statement Analyzer
+            </Button>
             <Button
               variant="primary"
               onClick={() => router.push('/subs')}
@@ -41,6 +48,8 @@ export default function Home() {
             >
               Subscriptions
             </Button>
+          </div>
+          <div className="flex gap-4 w-full sm:w-auto">
             <Button
               variant="primary"
               onClick={() => router.push('/gym_checkin')}
@@ -48,14 +57,14 @@ export default function Home() {
             >
               Gym Check-ins
             </Button>
+            <Button
+              variant="secondary"
+              onClick={currentSession ? checkOut : checkIn}
+              className="w-full sm:w-auto"
+            >
+              {currentSession ? 'Check-out' : 'Check-in'}
+            </Button>
           </div>
-          <Button
-            variant="secondary"
-            onClick={currentSession ? checkOut : checkIn}
-            className="w-full sm:w-auto"
-          >
-            {currentSession ? 'Check-out' : 'Check-in'}
-          </Button>
         </div>
       </div>
     </main>
