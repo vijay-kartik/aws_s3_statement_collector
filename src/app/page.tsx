@@ -3,116 +3,61 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Logo } from '@/components/ui/Logo';
+import { useGymStore } from '@/stores/gym/store';
+import { useEffect } from 'react';
 
-export default function LandingPage() {
+export default function Home() {
   const router = useRouter();
+  const { currentSession, checkIn, checkOut, getSessions } = useGymStore();
+
+  useEffect(() => {
+    // Load sessions on mount
+    getSessions();
+  }, [getSessions]);
 
   return (
-    <div className="min-h-screen bg-[#E6D5CC] bg-opacity-20">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="pt-16 sm:pt-24 text-center">
-          <div className="mb-6">
-            <div className="mb-8 flex justify-center">
-              <Logo className="w-32 h-32 sm:w-40 sm:h-40 transform hover:scale-105 transition-transform duration-200" />
-            </div>
-            <h1 className="text-4xl sm:text-5xl font-bold text-[#1E4E5F] mb-2">Welcome Kartik!</h1>
-            <div className="h-1 w-24 bg-[#1E4E5F] mx-auto"></div>
-          </div>
-          <p className="text-lg text-[#2D3436] mb-8 px-4 sm:px-0">
+    <main className="min-h-screen bg-[#E6D5CC] bg-opacity-20">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center mb-6">
+          <Logo className="w-8 h-8 sm:w-10 sm:h-10" />
+        </div>
+        
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-[#1E4E5F]">
+            Welcome to Elucida
+          </h1>
+          <div className="h-1 w-20 bg-[#1E4E5F] mx-auto mb-4"></div>
+          <p className="text-lg text-[#2D3436] mb-8">
             Analyze and manage your credit card statements and subscriptions
           </p>
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={() => router.push('/cc_statement_analyser')}
-                variant="primary"
-                size="lg"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
-              >
-                <span>Go to Statement Analyzer</span>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </Button>
-              <Button
-                onClick={() => router.push('/subs')}
-                variant="primary"
-                size="lg"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
-              >
-                <span>See Subscriptions</span>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </Button>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={() => router.push('/gym_checkin')}
-                variant="primary"
-                size="lg"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
-              >
-                <span>Gym Check-ins</span>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </Button>
-              <Button
-                onClick={() => {}}
-                variant="secondary"
-                size="lg"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-lg px-8"
-              >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="24" 
-                  height="24" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 5v14M5 12h14"/>
-                </svg>
-                <span>Record Check-in</span>
-              </Button>
-            </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex gap-4">
+            <Button
+              variant="primary"
+              onClick={() => router.push('/subs')}
+              className="w-full sm:w-auto"
+            >
+              Subscriptions
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => router.push('/gym_checkin')}
+              className="w-full sm:w-auto"
+            >
+              Gym Check-ins
+            </Button>
           </div>
+          <Button
+            variant="secondary"
+            onClick={currentSession ? checkOut : checkIn}
+            className="w-full sm:w-auto"
+          >
+            {currentSession ? 'Check-out' : 'Check-in'}
+          </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
