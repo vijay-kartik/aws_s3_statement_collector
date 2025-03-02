@@ -13,15 +13,24 @@ export function useGymSessions() {
     if (typeof window !== 'undefined') {
       loadSessions();
       
-      // Attempt sync when coming online
+      // Perform full sync when coming online
       if (isOnline) {
-        syncService.processSyncQueue().catch(console.error);
+        syncService.fullSync()
+          .then(() => loadSessions())
+          .catch(console.error);
       }
     }
   }, [isOnline]);
 
   const loadSessions = async () => {
     try {
+      setIsLoading(true);
+      
+      // Always try to sync with DynamoDB first if online
+      if (isOnline) {
+        await syncService.fullSync();
+      }
+
       const dbInstance = await getDB();
       if (!dbInstance) return;
 
@@ -49,10 +58,10 @@ export function useGymSessions() {
     await syncService.addToSyncQueue('create', newSession);
     
     if (isOnline) {
-      syncService.processSyncQueue().catch(console.error);
+      await syncService.fullSync();
     }
 
-    loadSessions();
+    await loadSessions();
   };
 
   const updateSession = async (session: GymSession) => {
@@ -66,10 +75,10 @@ export function useGymSessions() {
     await syncService.addToSyncQueue('update', updatedSession);
     
     if (isOnline) {
-      syncService.processSyncQueue().catch(console.error);
+      await syncService.fullSync();
     }
 
-    loadSessions();
+    await loadSessions();
   };
 
   const deleteSession = async (session: GymSession) => {
@@ -79,10 +88,10 @@ export function useGymSessions() {
     await syncService.addToSyncQueue('delete', session);
     
     if (isOnline) {
-      syncService.processSyncQueue().catch(console.error);
+      await syncService.fullSync();
     }
 
-    loadSessions();
+    await loadSessions();
   };
 
   const refresh = async () => {
