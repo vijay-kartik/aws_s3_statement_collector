@@ -96,10 +96,19 @@ export function useGymSessions() {
 
   const refresh = async () => {
     try {
+      setIsLoading(true);
+      
+      if (!isOnline) {
+        throw new Error('Cannot sync while offline');
+      }
+
       await syncService.fullSync();
       await loadSessions();
     } catch (error) {
       console.error('Error refreshing sessions:', error);
+      throw error; // Re-throw to let pull-to-refresh handle the error state
+    } finally {
+      setIsLoading(false);
     }
   };
 

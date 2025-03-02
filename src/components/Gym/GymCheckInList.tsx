@@ -6,6 +6,7 @@ import CurrentGymSession from './CurrentGymSession';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import PullToRefreshIndicator from '@/components/ui/PullToRefreshIndicator';
 import { useGymSessions } from '@/hooks/useGymSessions';
+import { toast } from 'react-toastify';
 
 export default function GymCheckInList() {
   const { 
@@ -32,7 +33,18 @@ export default function GymCheckInList() {
     isRefreshing,
     threshold
   } = usePullToRefresh({
-    onRefresh: async () => { await refresh(); }
+    onRefresh: async () => { 
+      try {
+        await refresh();
+        toast.success('Sessions refreshed successfully');
+      } catch (error) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error('Failed to refresh sessions');
+        }
+      }
+    }
   });
 
   useEffect(() => {
