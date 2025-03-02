@@ -189,12 +189,15 @@ export const useGymStore = create<GymStore>((set, get) => ({
       
       // Delete from IndexedDB and add to sync queue
       for (const session of selectedSessionsArray) {
-        await dbInstance.delete('sessions', session.id);
-        await syncService.addToSyncQueue('delete', session);
+        // Only delete completed sessions from DynamoDB
+        if (session.status === 'completed') {
+          await dbInstance.delete('sessions', session.id);
+          await syncService.addToSyncQueue('delete', session);
+        }
       }
       
       // Process sync queue if online
-      syncService.processSyncQueue().catch(console.error);
+      await syncService.processSyncQueue();
       
       // Update state
       const updatedSessions = sessions.filter(session => !selectedSessions.has(session.id));
