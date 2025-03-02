@@ -96,6 +96,14 @@ export const syncService = {
     if (!dbInstance) return;
 
     try {
+      // Get pending deletions from sync queue before processing
+      const syncQueue = await dbInstance.getAll('syncQueue');
+      const pendingDeletions = new Set(
+        syncQueue
+          .filter(item => item.operation === 'delete')
+          .map(item => item.data.id)
+      );
+
       // Process any pending changes first
       await this.processSyncQueue();
 
@@ -117,12 +125,33 @@ export const syncService = {
         try {
           const sessions = await dynamoService.getSessionsForMonth(month);
           if (sessions.length > 0) {
-            allFetchedSessions.push(...sessions);
+            // Filter out any sessions that are pending deletion
+            const validSessions = sessions.filter(session => !pendingDeletions.has(session.id));
+            allFetchedSessions.push(...validSessions);
           }
         } catch (error) {
           console.error(`Error syncing month ${month}:`, error);
         }
       }
+
+      // Clear existing completed sessions before batch update
+      await new Promise((resolve, reject) => {
+        const tx = dbInstance.transaction('sessions', 'readwrite');
+        tx.oncomplete = () => resolve(undefined);
+        tx.onerror = () => reject(tx.error);
+        
+        const store = tx.objectStore('sessions');
+        store.openCursor().then(function deleteCursor(cursor): Promise<void> | void {
+          if (!cursor) return;
+          
+          const session = cursor.value;
+          // Only delete completed sessions, preserve active ones
+          if (session.status === 'completed' && (!currentSession || session.id !== currentSession.id)) {
+            cursor.delete();
+          }
+          return cursor.continue().then(deleteCursor);
+        });
+      });
 
       // Batch update IndexedDB with all fetched sessions
       if (allFetchedSessions.length > 0) {
