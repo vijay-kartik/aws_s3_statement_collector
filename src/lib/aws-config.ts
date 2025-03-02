@@ -2,9 +2,6 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { awsConfig } from '@/config/aws';
 
-// Default region if not set in environment
-const DEFAULT_REGION = 'us-east-1';
-
 const client = new DynamoDBClient(awsConfig.getConfig());
 
 const marshallOptions = {

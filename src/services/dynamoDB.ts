@@ -5,24 +5,6 @@ import { awsConfig } from '@/config/aws';
 
 const TABLE_NAME = 'gym-checkins';
 
-// Validate AWS configuration
-const validateConfig = () => {
-  const region = process.env.NEXT_PUBLIC_AWS_REGION;
-  const accessKeyId = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID;
-  const secretAccessKey = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
-
-  if (!region || !accessKeyId || !secretAccessKey) {
-    throw new Error('AWS configuration is missing. Please check your environment variables.');
-  }
-
-  // Log configuration for debugging (remove in production)
-  console.log('AWS Config:', {
-    region,
-    accessKeyId: accessKeyId.substring(0, 5) + '...',
-    hasSecretKey: !!secretAccessKey
-  });
-};
-
 export const dynamoService = {
   async createSession(session: GymSession) {
     try {
