@@ -49,8 +49,12 @@ export const syncService = {
             tx.oncomplete = () => resolve(undefined);
             tx.onerror = () => reject(tx.error);
             
-            if (item.operation !== 'delete') {
-              const sessionStore = tx.objectStore('sessions');
+            const sessionStore = tx.objectStore('sessions');
+            if (item.operation === 'delete') {
+              // For delete operations, remove the session from IndexedDB
+              sessionStore.delete(item.data.id);
+            } else {
+              // For create/update operations, update the session
               sessionStore.put({
                 ...item.data,
                 syncStatus: item.data.status === 'completed' ? 'synced' : 'pending',
@@ -58,10 +62,10 @@ export const syncService = {
               });
             }
             
+            // Remove the item from sync queue
             const syncStore = tx.objectStore('syncQueue');
             syncStore.delete(item.id);
           });
-
         } catch (error) {
           console.error('Sync failed for item:', item, error);
           
