@@ -1,16 +1,11 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { awsConfig } from '@/config/aws';
 
 // Default region if not set in environment
 const DEFAULT_REGION = 'us-east-1';
 
-const client = new DynamoDBClient({
-  region: process.env.NEXT_PUBLIC_AWS_REGION || DEFAULT_REGION,
-  credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || '',
-  },
-});
+const client = new DynamoDBClient(awsConfig.getConfig());
 
 const marshallOptions = {
   // Whether to automatically convert empty strings, blobs, and sets to `null`

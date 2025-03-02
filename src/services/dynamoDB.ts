@@ -1,6 +1,7 @@
 import { PutCommand, QueryCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { docClient } from '@/lib/aws-config';
 import { GymSession } from '@/types/gym';
+import { awsConfig } from '@/config/aws';
 
 const TABLE_NAME = 'gym-checkins';
 
@@ -25,7 +26,10 @@ const validateConfig = () => {
 export const dynamoService = {
   async createSession(session: GymSession) {
     try {
-      validateConfig();
+      if (!awsConfig.isConfigured()) {
+        throw new Error('AWS configuration is missing');
+      }
+
       const yearMonth = session.checkInTime.substring(0, 7).replace('-', '_');
       
       const command = new PutCommand({
@@ -45,7 +49,10 @@ export const dynamoService = {
 
   async deleteSession(session: GymSession) {
     try {
-      validateConfig();
+      if (!awsConfig.isConfigured()) {
+        throw new Error('AWS configuration is missing');
+      }
+
       const yearMonth = session.checkInTime.substring(0, 7).replace('-', '_');
       
       const command = new DeleteCommand({
@@ -65,7 +72,10 @@ export const dynamoService = {
 
   async getSessionsForMonth(yearMonth: string) {
     try {
-      validateConfig();
+      if (!awsConfig.isConfigured()) {
+        throw new Error('AWS configuration is missing');
+      }
+
       const command = new QueryCommand({
         TableName: TABLE_NAME,
         KeyConditionExpression: 'year_month = :ym',
