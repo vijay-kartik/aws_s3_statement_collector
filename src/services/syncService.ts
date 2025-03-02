@@ -96,15 +96,7 @@ export const syncService = {
     if (!dbInstance) return;
 
     try {
-      // Get pending deletions from sync queue before processing
-      const syncQueue = await dbInstance.getAll('syncQueue');
-      const pendingDeletions = new Set(
-        syncQueue
-          .filter(item => item.operation === 'delete')
-          .map(item => item.data.id)
-      );
-
-      // Process any pending changes first
+      // Process any pending changes first to ensure they're synced to DynamoDB
       await this.processSyncQueue();
 
       // Get all months in the last year
@@ -117,7 +109,7 @@ export const syncService = {
       // Get current active session from localStorage if exists
       const currentSession = JSON.parse(localStorage.getItem('currentGymSession') || 'null');
 
-      // Track all fetched sessions to batch update IndexedDB
+      // Track all fetched sessions from DynamoDB (source of truth)
       const allFetchedSessions: GymSession[] = [];
 
       // Fetch all sessions from DynamoDB
@@ -125,45 +117,35 @@ export const syncService = {
         try {
           const sessions = await dynamoService.getSessionsForMonth(month);
           if (sessions.length > 0) {
-            // Filter out any sessions that are pending deletion
-            const validSessions = sessions.filter(session => !pendingDeletions.has(session.id));
-            allFetchedSessions.push(...validSessions);
+            allFetchedSessions.push(...sessions);
           }
         } catch (error) {
           console.error(`Error syncing month ${month}:`, error);
         }
       }
 
-      // Clear existing completed sessions before batch update
+      // Replace all completed sessions in IndexedDB with DynamoDB data
       await new Promise((resolve, reject) => {
         const tx = dbInstance.transaction('sessions', 'readwrite');
         tx.oncomplete = () => resolve(undefined);
         tx.onerror = () => reject(tx.error);
         
         const store = tx.objectStore('sessions');
+
+        // First, clear all completed sessions
         store.openCursor().then(function deleteCursor(cursor): Promise<void> | void {
           if (!cursor) return;
           
           const session = cursor.value;
           // Only delete completed sessions, preserve active ones
-          if (session.status === 'completed' && (!currentSession || session.id !== currentSession.id)) {
+          if (session.status === 'completed') {
             cursor.delete();
           }
           return cursor.continue().then(deleteCursor);
-        });
-      });
-
-      // Batch update IndexedDB with all fetched sessions
-      if (allFetchedSessions.length > 0) {
-        await new Promise((resolve, reject) => {
-          const tx = dbInstance.transaction('sessions', 'readwrite');
-          
-          tx.oncomplete = () => resolve(undefined);
-          tx.onerror = () => reject(tx.error);
-          
-          const store = tx.objectStore('sessions');
+        }).then(() => {
+          // Then, add all sessions from DynamoDB
           allFetchedSessions.forEach(session => {
-            // Don't overwrite current active session
+            // Skip if this is the current active session
             if (currentSession && session.id === currentSession.id) {
               return;
             }
@@ -175,7 +157,7 @@ export const syncService = {
             });
           });
         });
-      }
+      });
     } catch (error) {
       console.error('Error during full sync:', error);
       throw error;
