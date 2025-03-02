@@ -28,18 +28,21 @@ export const syncService = {
       // Process each item sequentially
       for (const item of queue) {
         try {
-          // First, try to sync with DynamoDB
-          switch (item.operation) {
-            case 'create':
-            case 'update':
-              await dynamoService.createSession(item.data);
-              break;
-            case 'delete':
-              await dynamoService.deleteSession(item.data);
-              break;
+          // Only sync completed sessions to DynamoDB
+          if (item.data.status === 'completed') {
+            // First, try to sync with DynamoDB
+            switch (item.operation) {
+              case 'create':
+              case 'update':
+                await dynamoService.createSession(item.data);
+                break;
+              case 'delete':
+                await dynamoService.deleteSession(item.data);
+                break;
+            }
           }
 
-          // If DynamoDB sync was successful, update IndexedDB
+          // Update IndexedDB regardless of session status
           await new Promise((resolve, reject) => {
             const tx = dbInstance.transaction(['syncQueue', 'sessions'], 'readwrite');
             
@@ -50,8 +53,8 @@ export const syncService = {
               const sessionStore = tx.objectStore('sessions');
               sessionStore.put({
                 ...item.data,
-                syncStatus: 'synced',
-                lastSynced: new Date().toISOString()
+                syncStatus: item.data.status === 'completed' ? 'synced' : 'pending',
+                lastSynced: item.data.status === 'completed' ? new Date().toISOString() : undefined
               });
             }
             
@@ -99,6 +102,9 @@ export const syncService = {
         return `${date.getFullYear()}_${String(date.getMonth() + 1).padStart(2, '0')}`;
       });
 
+      // Get current active session from localStorage if exists
+      const currentSession = JSON.parse(localStorage.getItem('currentGymSession') || 'null');
+
       // Fetch all sessions from DynamoDB
       for (const month of months) {
         try {
@@ -114,8 +120,13 @@ export const syncService = {
               
               const store = tx.objectStore('sessions');
               sessions.forEach(session => {
+                // Don't overwrite current active session
+                if (currentSession && session.id === currentSession.id) {
+                  return;
+                }
                 store.put({
                   ...session,
+                  status: 'completed', // All sessions from DynamoDB are completed
                   syncStatus: 'synced',
                   lastSynced: new Date().toISOString()
                 });

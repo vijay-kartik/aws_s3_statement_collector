@@ -14,6 +14,8 @@ export default function GymCheckInItem({
   isSelected,
   onSelect 
 }: GymCheckInItemProps) {
+  const isCompleted = session.status === 'completed';
+
   return (
     <div 
       className={`bg-white p-3 sm:p-4 rounded-lg shadow-sm border transition-colors duration-200 ${
@@ -45,16 +47,25 @@ export default function GymCheckInItem({
                 {formatDateTime(session.checkInTime)}
               </div>
             </div>
-            <div>
-              <div className="text-xs sm:text-sm text-gray-500">Check-out</div>
-              <div className="text-sm sm:text-base font-medium truncate">
-                {formatDateTime(session.checkOutTime!)}
+            {isCompleted && session.checkOutTime && (
+              <div>
+                <div className="text-xs sm:text-sm text-gray-500">Check-out</div>
+                <div className="text-sm sm:text-base font-medium truncate">
+                  {formatDateTime(session.checkOutTime)}
+                </div>
               </div>
+            )}
+          </div>
+          {isCompleted && session.duration && (
+            <div className="mt-1 sm:mt-2 text-[#1E4E5F] text-sm sm:text-base font-semibold">
+              Duration: {session.duration}
             </div>
-          </div>
-          <div className="mt-1 sm:mt-2 text-[#1E4E5F] text-sm sm:text-base font-semibold">
-            Duration: {session.duration}
-          </div>
+          )}
+          {!isCompleted && (
+            <div className="mt-1 sm:mt-2 text-green-600 text-sm sm:text-base font-semibold">
+              In Progress
+            </div>
+          )}
         </div>
       </div>
     </div>

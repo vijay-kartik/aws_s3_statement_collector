@@ -57,7 +57,10 @@ export default function GymCheckInList() {
     return () => clearInterval(interval);
   }, [currentSession, getSessionDuration]);
 
-  if (sessions.length === 0 && !currentSession) {
+  // Filter out active sessions from the list since they're shown in CurrentGymSession
+  const completedSessions = sessions.filter(session => session.status === 'completed');
+
+  if (completedSessions.length === 0 && !currentSession) {
     return (
       <div className="text-center text-gray-500 py-4 sm:py-8">
         No gym sessions recorded yet
@@ -81,7 +84,7 @@ export default function GymCheckInList() {
         }}
       >
         {/* Header with edit controls */}
-        {sessions.length > 0 && (
+        {completedSessions.length > 0 && (
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
             <h2 className="text-base sm:text-lg font-semibold text-[#1E4E5F]">
               {isEditing ? 'Select sessions to delete' : 'Session History'}
@@ -129,7 +132,7 @@ export default function GymCheckInList() {
         
         {/* Session list */}
         <div className="space-y-2 sm:space-y-3">
-          {sessions.map((session) => (
+          {completedSessions.map((session) => (
             <GymCheckInItem
               key={session.id}
               session={session}
