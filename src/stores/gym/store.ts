@@ -132,6 +132,15 @@ export const useGymStore = create<GymStore>((set, get) => ({
       // Get sessions from IndexedDB
       const allSessions = await dbInstance.getAll('sessions');
       
+      // If IndexedDB is empty, try to fetch from DynamoDB
+      if (allSessions.length === 0) {
+        await syncService.fullSync();
+        // Get sessions again after sync
+        const syncedSessions = await dbInstance.getAll('sessions');
+        set({ sessions: syncedSessions });
+        return syncedSessions;
+      }
+      
       // Get current session from localStorage
       const currentSession = JSON.parse(localStorage.getItem('currentGymSession') || 'null') as GymSession | null;
       

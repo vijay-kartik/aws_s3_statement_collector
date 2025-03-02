@@ -105,37 +105,43 @@ export const syncService = {
       // Get current active session from localStorage if exists
       const currentSession = JSON.parse(localStorage.getItem('currentGymSession') || 'null');
 
+      // Track all fetched sessions to batch update IndexedDB
+      const allFetchedSessions: GymSession[] = [];
+
       // Fetch all sessions from DynamoDB
       for (const month of months) {
         try {
           const sessions = await dynamoService.getSessionsForMonth(month);
-          
           if (sessions.length > 0) {
-            // Update IndexedDB with the fetched sessions
-            await new Promise((resolve, reject) => {
-              const tx = dbInstance.transaction('sessions', 'readwrite');
-              
-              tx.oncomplete = () => resolve(undefined);
-              tx.onerror = () => reject(tx.error);
-              
-              const store = tx.objectStore('sessions');
-              sessions.forEach(session => {
-                // Don't overwrite current active session
-                if (currentSession && session.id === currentSession.id) {
-                  return;
-                }
-                store.put({
-                  ...session,
-                  status: 'completed', // All sessions from DynamoDB are completed
-                  syncStatus: 'synced',
-                  lastSynced: new Date().toISOString()
-                });
-              });
-            });
+            allFetchedSessions.push(...sessions);
           }
         } catch (error) {
           console.error(`Error syncing month ${month}:`, error);
         }
+      }
+
+      // Batch update IndexedDB with all fetched sessions
+      if (allFetchedSessions.length > 0) {
+        await new Promise((resolve, reject) => {
+          const tx = dbInstance.transaction('sessions', 'readwrite');
+          
+          tx.oncomplete = () => resolve(undefined);
+          tx.onerror = () => reject(tx.error);
+          
+          const store = tx.objectStore('sessions');
+          allFetchedSessions.forEach(session => {
+            // Don't overwrite current active session
+            if (currentSession && session.id === currentSession.id) {
+              return;
+            }
+            store.put({
+              ...session,
+              status: 'completed', // All sessions from DynamoDB are completed
+              syncStatus: 'synced',
+              lastSynced: new Date().toISOString()
+            });
+          });
+        });
       }
     } catch (error) {
       console.error('Error during full sync:', error);
