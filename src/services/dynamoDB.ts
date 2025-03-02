@@ -6,7 +6,7 @@ const TABLE_NAME = 'gym-checkins';
 
 // Validate AWS configuration
 const validateConfig = () => {
-  const region = process.env.AWS_DEFAULT_REGION;
+  const region = process.env.NEXT_PUBLIC_AWS_REGION;
   const accessKeyId = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID;
   const secretAccessKey = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
 
