@@ -34,3 +34,29 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# PROJECT OVERVIEW
+
+This project is a statement collector for an individual. It allows the user to upload statements and view them in a list.
+User can also analyze their statements and get insights from them.
+It also has a subscription feature to view their subscriptions and manage them.
+
+# TECH STACK
+
+- Next.js
+- Tailwind CSS
+- Shadcn UI
+- Zustand
+
+# SYNC PROCESS
+
+The app implements an offline-first approach for gym check-ins, ensuring data persistence and synchronization between local storage and cloud.
+
+![Gym Sessions Sync Process](/public/sync-process.svg)
+
+Key features of the sync process:
+- Offline-first data storage using IndexedDB
+- Background synchronization with DynamoDB
+- Optimistic UI updates
+- Queue-based sync management
+- Automatic conflict resolution
