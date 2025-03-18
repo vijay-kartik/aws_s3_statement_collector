@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getDB } from '@/services/indexedDB';
 import { syncService } from '@/services/syncService';
 import { useNetworkStatus } from './useNetworkStatus'; // You'll need to create this
@@ -9,20 +9,8 @@ export function useGymSessions() {
   const [isLoading, setIsLoading] = useState(true);
   const isOnline = useNetworkStatus();
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      loadSessions();
-      
-      // Perform full sync when coming online
-      if (isOnline) {
-        syncService.fullSync()
-          .then(() => loadSessions())
-          .catch(console.error);
-      }
-    }
-  }, [isOnline]);
-
-  const loadSessions = async () => {
+  // Use useCallback to memoize the loadSessions function
+  const loadSessions = useCallback(async () => {
     try {
       setIsLoading(true);
       
@@ -43,7 +31,20 @@ export function useGymSessions() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isOnline]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      loadSessions();
+      
+      // Perform full sync when coming online
+      if (isOnline) {
+        syncService.fullSync()
+          .then(() => loadSessions())
+          .catch(console.error);
+      }
+    }
+  }, [isOnline, loadSessions]);
 
   const createSession = async (sessionData: Omit<GymSession, 'id' | 'syncStatus'>) => {
     const newSession: GymSession = {

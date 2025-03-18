@@ -5,7 +5,7 @@
  * @returns An object with validation result and any missing fields
  */
 export function validateRequiredFields(
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   requiredFields: string[]
 ): { isValid: boolean; missingFields: string[] } {
   const missingFields = requiredFields.filter(field => {
@@ -27,8 +27,8 @@ export function validateRequiredFields(
  * @returns An object with validation result and any invalid fields
  */
 export function validateFieldTypes(
-  data: Record<string, any>,
-  typeValidations: Record<string, (value: any) => boolean>
+  data: Record<string, unknown>,
+  typeValidations: Record<string, (value: unknown) => boolean>
 ): { isValid: boolean; invalidFields: string[] } {
   const invalidFields = Object.entries(typeValidations)
     .filter(([field, validationFn]) => {
@@ -47,22 +47,22 @@ export function validateFieldTypes(
 
 // Common validation functions
 export const validators = {
-  isString: (value: any): boolean => typeof value === 'string',
-  isNumber: (value: any): boolean => typeof value === 'number' && !isNaN(value),
-  isBoolean: (value: any): boolean => typeof value === 'boolean',
-  isDate: (value: any): boolean => value instanceof Date && !isNaN(value.getTime()),
-  isArray: (value: any): boolean => Array.isArray(value),
-  isEmail: (value: any): boolean => {
+  isString: (value: unknown): boolean => typeof value === 'string',
+  isNumber: (value: unknown): boolean => typeof value === 'number' && !isNaN(value),
+  isBoolean: (value: unknown): boolean => typeof value === 'boolean',
+  isDate: (value: unknown): boolean => value instanceof Date && !isNaN(value.getTime()),
+  isArray: (value: unknown): boolean => Array.isArray(value),
+  isEmail: (value: unknown): boolean => {
     if (typeof value !== 'string') return false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   },
-  isUrl: (value: any): boolean => {
+  isUrl: (value: unknown): boolean => {
     if (typeof value !== 'string') return false;
     try {
       new URL(value);
       return true;
-    } catch (e) {
+    } catch {
       return false;
     }
   }

@@ -10,7 +10,6 @@ const categories = ['All', 'Nature', 'Urban', 'Food', 'Shrine', 'Wellness'];
  * Component for displaying Japan planning ideas with Instagram reels
  */
 export default function JapanPlanningIdeas() {
-  const [ideas, setIdeas] = useState<(PlanningIdea & { reelEmbed: string })[]>([]);
   const [filteredIdeas, setFilteredIdeas] = useState<(PlanningIdea & { reelEmbed: string })[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isLoading, setIsLoading] = useState(true);
@@ -37,9 +36,6 @@ export default function JapanPlanningIdeas() {
         
         if (result.status === 'success' && Array.isArray(result.data)) {
           setFilteredIdeas(result.data);
-          if (selectedCategory === 'All') {
-            setIdeas(result.data);
-          }
           setError(null);
         } else {
           throw new Error('Invalid response format');

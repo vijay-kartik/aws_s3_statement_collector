@@ -68,6 +68,6 @@ export interface DataResponse<T> {
     message: string;
     
     /** Optional detailed information about the error */
-    details?: any;
+    details?: unknown;
   };
 } 
