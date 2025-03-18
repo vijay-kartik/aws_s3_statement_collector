@@ -16,12 +16,15 @@ interface GymCheckInsDB {
   };
 }
 
+// Helper constant to determine if we're on client side
+const isClient = typeof window !== 'undefined';
+
 let dbPromise: Promise<IDBPDatabase<GymCheckInsDB>> | null = null;
 
 export const initDB = async () => {
   // Only initialize IndexedDB on the client side
-  if (typeof window === 'undefined') {
-    throw new Error('Cannot initialize IndexedDB on server side');
+  if (!isClient) {
+    return Promise.reject(new Error('Cannot initialize IndexedDB on server side'));
   }
 
   return openDB<GymCheckInsDB>(DB_NAME, DB_VERSION, {
@@ -36,15 +39,31 @@ export const initDB = async () => {
   });
 };
 
-// Lazy initialization of the database
-export const db = typeof window === 'undefined' 
-  ? Promise.reject(new Error('Cannot access IndexedDB on server side'))
-  : (dbPromise || (dbPromise = initDB()));
+// Create a function to safely get dbPromise
+const getDBPromise = () => {
+  if (!isClient) {
+    return Promise.reject(new Error('Cannot access IndexedDB on server side'));
+  }
+  
+  if (!dbPromise) {
+    dbPromise = initDB();
+  }
+  
+  return dbPromise;
+};
 
 // Helper function to ensure we're on client side before accessing DB
 export const getDB = async () => {
-  if (typeof window === 'undefined') {
-    throw new Error('IndexedDB is not available during server-side rendering');
+  if (!isClient) {
+    // Return null in server environment without throwing an error
+    console.warn('IndexedDB access attempted during server-side rendering');
+    return null;
   }
-  return db;
+  
+  try {
+    return await getDBPromise();
+  } catch (error) {
+    console.error('Failed to initialize IndexedDB:', error);
+    return null;
+  }
 } 

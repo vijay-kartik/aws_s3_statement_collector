@@ -2,8 +2,13 @@ import { getDB } from './indexedDB';
 import { dynamoService } from './dynamoDB';
 import { GymSession, SyncOperation, SyncQueue } from '@/types/gym';
 
+// Helper to check if we're on client side
+const isClient = typeof window !== 'undefined';
+
 export const syncService = {
   async addToSyncQueue(operation: SyncOperation, session: GymSession) {
+    if (!isClient) return;
+    
     const dbInstance = await getDB();
     if (!dbInstance) return;
 
@@ -18,6 +23,8 @@ export const syncService = {
   },
 
   async processSyncQueue() {
+    if (!isClient) return;
+    
     const dbInstance = await getDB();
     if (!dbInstance) return;
     
@@ -92,6 +99,8 @@ export const syncService = {
   },
 
   async fullSync() {
+    if (!isClient) return;
+    
     const dbInstance = await getDB();
     if (!dbInstance) return;
 

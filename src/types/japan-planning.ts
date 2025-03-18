@@ -15,9 +15,6 @@ export interface PlanningIdea {
   /** Detailed description of the place or experience */
   description: string;
   
-  /** Instagram reel URL */
-  reelUrl: string;
-  
   /** HTML embed code for the Instagram reel */
   reelEmbed: string;
   
@@ -32,18 +29,4 @@ export interface PlanningIdea {
   
   /** Timestamp when the idea was added */
   createdAt: string;
-}
-
-/**
- * Response structure for the mock Instagram API
- */
-export interface InstagramReelResponse {
-  /** HTML to embed the Instagram reel */
-  html: string;
-  
-  /** Width of the embed */
-  width: number;
-  
-  /** Height of the embed */
-  height: number;
 } 

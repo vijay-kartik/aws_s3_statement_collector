@@ -4,14 +4,18 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Logo } from '@/components/ui/Logo';
 import { useGymStore } from '@/stores/gym/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const router = useRouter();
   const { currentSession, checkIn, checkOut, getSessions } = useGymStore();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // Load sessions on mount
+    // Set isClient to true once the component is mounted
+    setIsClient(true);
+    
+    // Load sessions on mount (only on client side)
     getSessions();
   }, [getSessions]);
 
@@ -57,13 +61,15 @@ export default function Home() {
             >
               Gym Check-ins
             </Button>
-            <Button
-              variant="secondary"
-              onClick={currentSession ? checkOut : checkIn}
-              className="w-full sm:w-auto"
-            >
-              {currentSession ? 'Check-out' : 'Check-in'}
-            </Button>
+            {isClient && (
+              <Button
+                variant="secondary"
+                onClick={currentSession ? checkOut : checkIn}
+                className="w-full sm:w-auto"
+              >
+                {currentSession ? 'Check-out' : 'Check-in'}
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { PlanningIdea } from '@/types/japan-planning';
 import InstagramReel from './InstagramReel';
 
 interface PlanningIdeaCardProps {
-  idea: PlanningIdea & { reelEmbed: string };
+  idea: PlanningIdea;
 }
 
 /**
@@ -16,7 +16,12 @@ export default function PlanningIdeaCard({ idea }: PlanningIdeaCardProps) {
       <div className="flex flex-col md:flex-row">
         {/* Instagram Reel */}
         <div className="md:w-1/3 lg:w-2/5 p-4 flex items-center justify-center">
-          <InstagramReel embedHtml={reelEmbed} className="w-full max-w-[320px] mx-auto" />
+          <InstagramReel 
+            embedHtml={reelEmbed} 
+            className="w-full max-w-[320px] mx-auto" 
+            maxHeight={350} // Set a fixed height for all embeds
+            borderRadius={16} // Rounded corners to match the card's aesthetic
+          />
         </div>
 
         {/* Description */}

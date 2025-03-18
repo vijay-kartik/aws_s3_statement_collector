@@ -4,7 +4,7 @@ import { GymSession } from '@/types/gym';
 import { getDB } from '@/services/indexedDB';
 import { syncService } from '@/services/syncService';
 
-
+// Type for our store state and actions
 interface GymStore {
   currentSession: GymSession | null;
   sessions: GymSession[];
@@ -21,13 +21,19 @@ interface GymStore {
   getSessionDuration: (checkInTime: string) => string;
 }
 
-export const useGymStore = create<GymStore>((set, get) => ({
+// Helper to ensure we're on the client side before creating the store
+const isClient = typeof window !== 'undefined';
+
+// Create the store with a conditional check for client-side
+const useGymStoreBase = create<GymStore>((set, get) => ({
   currentSession: null,
   sessions: [],
   isEditing: false,
   selectedSessions: new Set<string>(),
 
   checkIn: async () => {
+    if (!isClient) return;
+    
     try {
       const dbInstance = await getDB();
       if (!dbInstance) {
@@ -63,6 +69,8 @@ export const useGymStore = create<GymStore>((set, get) => ({
   },
 
   checkOut: async () => {
+    if (!isClient) return;
+    
     try {
       const currentSession = get().currentSession;
       if (!currentSession) return;
@@ -108,6 +116,8 @@ export const useGymStore = create<GymStore>((set, get) => ({
   },
 
   abandonSession: () => {
+    if (!isClient) return;
+    
     const currentSession = get().currentSession;
     if (!currentSession) return;
 
@@ -122,6 +132,8 @@ export const useGymStore = create<GymStore>((set, get) => ({
   },
 
   getSessions: async () => {
+    if (!isClient) return [];
+    
     try {
       const dbInstance = await getDB();
       if (!dbInstance) {
@@ -186,6 +198,8 @@ export const useGymStore = create<GymStore>((set, get) => ({
   },
 
   deleteSelectedSessions: async () => {
+    if (!isClient) return;
+    
     try {
       const { sessions, selectedSessions } = get();
       const dbInstance = await getDB();
@@ -227,6 +241,31 @@ export const useGymStore = create<GymStore>((set, get) => ({
     return calculateDuration(new Date(checkInTime), new Date());
   },
 }));
+
+// Create a wrapper that ensures store is only used on client-side
+export const useGymStore = (() => {
+  // In SSR environments, return a dummy store that does nothing
+  if (!isClient) {
+    return () => ({
+      currentSession: null,
+      sessions: [],
+      isEditing: false,
+      selectedSessions: new Set<string>(),
+      checkIn: async () => {},
+      checkOut: async () => {},
+      abandonSession: () => {},
+      getSessions: async () => [] as GymSession[],
+      toggleEditing: () => {},
+      toggleSessionSelection: () => {},
+      clearSelection: () => {},
+      deleteSelectedSessions: async () => {},
+      getSessionDuration: () => '0h 0m',
+    });
+  }
+  
+  // On the client, return the real store
+  return useGymStoreBase;
+})();
 
 function calculateDuration(startTime: Date, endTime: Date): string {
   const diff = endTime.getTime() - startTime.getTime();
